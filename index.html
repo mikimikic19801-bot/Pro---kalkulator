@@ -3,128 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progresivni Kalkulator Uloga</title>
+    <title>Progresivni Kalkulator | Premium</title>
+    <link href="https://cloudflare.com" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; display: flex; justify-content: center; }
-        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
-        h2 { text-align: center; color: #333; }
-        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; background: #eef2f3; padding: 15px; border-radius: 5px; }
-        .input-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
-        .btn-group { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; color: white; }
-        .win { background-color: #28a745; }
-        .loss { background-color: #dc3545; }
-        .reset { background-color: #6c757d; margin-top: 10px; width: 100%; }
-        .result-box { margin-top: 20px; padding: 15px; border: 2px solid #007bff; border-radius: 5px; text-align: center; background: #f0f7ff; }
-        .result-box span { display: block; font-size: 24px; font-weight: bold; color: #007bff; }
+        :root {
+            --primary: #3498db;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        .app-card {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 450px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 22px;
+            margin: 0;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .stat-item span {
+            display: block;
+            font-size: 12px;
+            color: var(--text-dim);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .stat-item strong {
+            font-size: 18px;
+        }
+
+        .input-section {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 8px;
+            color: var(--text-dim);
+        }
+
+        input {
+            width: 100%;
+            background: #334155;
+            border: 1px solid #475569;
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #3d4b5f;
+        }
+
+        .bet-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--primary);
+            margin-bottom: 25px;
+        }
+
+        .bet-box small {
+            color: var(--primary);
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .bet-box .stake {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        button {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            transition: transform 0.2s, opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:active { transform: scale(0.95); }
+
+        .btn-win { background: var(--success); color: #fff; }
+        .btn-loss { background: var(--danger); color: #fff; }
+        .btn-reset { 
+            grid-column: span 2; 
+            background: transparent; 
+            color: var(--text-dim);
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        .btn-reset:hover { color: #fff; }
+
+        .history-badge {
+            background: var(--primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            float: right;
+        }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Progresivni Kalkulator</h2>
+<div class="app-card">
+    <header>
+        <h1><i class="fas fa-calculator"></i> Pro-Calc</h1>
+    </header>
 
-    <!-- Početna podešavanja -->
-    <div id="setup">
-        <div class="input-group">
-            <label>Početna Banka (€):</label>
-            <input type="number" id="initialBank" value="100">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <span>Trenutna Banka</span>
+            <strong id="bankDisplay">0.00</strong>
         </div>
-        <div class="input-group">
-            <label>Željeni Profit po betu (€):</label>
-            <input type="number" id="targetProfit" value="10">
+        <div class="stat-item" style="border-color: var(--danger);">
+            <span>Ukupni Minus</span>
+            <strong id="lossDisplay">0.00</strong>
         </div>
-        <hr>
     </div>
 
-    <!-- Live Stats -->
-    <div class="stats">
-        <div>Trenutna Banka: <br><strong id="currentBankDisplay">0</strong></div>
-        <div>Ukupni Minus: <br><strong id="currentLossDisplay" style="color:red">0</strong></div>
+    <div class="input-section">
+        <div class="field">
+            <label>Početna Banka & Profit (€)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="initBank" value="100" placeholder="Banka">
+                <input type="number" id="targetProfit" value="10" placeholder="Profit">
+            </div>
+        </div>
+        <div class="field" style="margin-bottom: 0;">
+            <label>Kvota za sledeći par</label>
+            <input type="number" id="odds" value="2.00" step="0.01">
+        </div>
     </div>
 
-    <!-- Igra -->
-    <div class="input-group">
-        <label>Trenutna Kvota:</label>
-        <input type="number" id="currentOdds" step="0.01" value="2.00">
+    <div class="bet-box">
+        <small>POTREBAN ULOG</small>
+        <div class="stake"><span id="nextStake">0.00</span>€</div>
     </div>
 
-    <div class="result-box">
-        Sledeći potreban ulog:
-        <span id="nextStakeDisplay">0.00</span>
+    <div class="actions">
+        <button class="btn-win" onclick="process('win')">
+            <i class="fas fa-check-circle"></i> PROLAZ
+        </button>
+        <button class="btn-loss" onclick="process('loss')">
+            <i class="fas fa-times-circle"></i> PAD
+        </button>
+        <button class="btn-reset" onclick="resetApp()">
+            <i class="fas fa-undo"></i> RESETUJ SESIJU
+        </button>
     </div>
-
-    <div class="btn-group" style="margin-top: 20px;">
-        <button class="win" onclick="handleResult('win')">PROLAZ (WIN)</button>
-        <button class="loss" onclick="handleResult('loss')">PAD (LOSS)</button>
-    </div>
-
-    <button class="reset" onclick="resetCalculator()">RESETUJ SVE</button>
 </div>
 
 <script>
     let bank = 0;
     let target = 0;
-    let totalLoss = 0;
+    let currentMinus = 0;
 
-    function init() {
-        bank = parseFloat(document.getElementById('initialBank').value);
-        target = parseFloat(document.getElementById('targetProfit').value);
-        calculateStake();
-        updateUI();
+    function refresh() {
+        bank = parseFloat(document.getElementById('initBank').value) || 0;
+        target = parseFloat(document.getElementById('targetProfit').value) || 0;
+        updateView();
     }
 
-    function calculateStake() {
-        let odds = parseFloat(document.getElementById('currentOdds').value);
-        if (odds <= 1) {
-            alert("Kvota mora biti veća od 1.00");
-            return;
-        }
+    function calculate() {
+        let q = parseFloat(document.getElementById('odds').value) || 0;
+        if (q <= 1) return 0;
         
-        // Formula: (Minus + Cilj) / (Kvota - 1)
-        let stake = (totalLoss + target) / (odds - 1);
-        document.getElementById('nextStakeDisplay').innerText = stake.toFixed(2);
-        return stake;
+        let stake = (currentMinus + target) / (q - 1);
+        return Math.max(stake, 0).toFixed(2);
     }
 
-    function handleResult(type) {
-        let stake = calculateStake();
-        let odds = parseFloat(document.getElementById('currentOdds').value);
+    function updateView() {
+        document.getElementById('bankDisplay').innerText = bank.toFixed(2) + " €";
+        document.getElementById('lossDisplay').innerText = currentMinus.toFixed(2) + " €";
+        document.getElementById('nextStake').innerText = calculate();
+    }
 
-        if (type === 'win') {
-            let winAmount = stake * odds;
-            bank += (winAmount - stake); // Neto dobitak
-            totalLoss = 0; // Resetujemo minus jer smo ga pokrili
-            alert("Čestitamo! Profit ostvaren. Sistem se vraća na početni ulog.");
+    function process(result) {
+        let s = parseFloat(calculate());
+        let q = parseFloat(document.getElementById('odds').value);
+
+        if (result === 'win') {
+            bank += (s * q) - s;
+            currentMinus = 0;
         } else {
-            bank -= stake;
-            totalLoss += stake; // Dodajemo ulog u minus koji jurimo
+            bank -= s;
+            currentMinus += s;
         }
-
-        updateUI();
-        calculateStake();
+        updateView();
     }
 
-    function updateUI() {
-        document.getElementById('currentBankDisplay').innerText = bank.toFixed(2);
-        document.getElementById('currentLossDisplay').innerText = totalLoss.toFixed(2);
+    function resetApp() {
+        if(confirm("Obrisati sve podatke?")) location.reload();
     }
 
-    function resetCalculator() {
-        if(confirm("Da li želite da resetujete celu sesiju?")) {
-            location.reload();
-        }
-    }
+    // Listeners
+    document.getElementById('odds').addEventListener('input', updateView);
+    document.getElementById('initBank').addEventListener('input', refresh);
+    document.getElementById('targetProfit').addEventListener('input', refresh);
 
-    // Automatsko ažuriranje uloga kada se promeni kvota
-    document.getElementById('currentOdds').addEventListener('input', calculateStake);
-    document.getElementById('initialBank').addEventListener('input', init);
-    document.getElementById('targetProfit').addEventListener('input', init);
-
-    // Pokreni inicijalno
-    init();
+    refresh();
 </script>
 
 </body>
