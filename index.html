@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progresivni Kalkulator Uloga</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f9; padding: 20px; display: flex; justify-content: center; }
+        .container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        h2 { text-align: center; color: #333; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; background: #eef2f3; padding: 15px; border-radius: 5px; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
+        .btn-group { display: flex; gap: 10px; }
+        button { flex: 1; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 16px; color: white; }
+        .win { background-color: #28a745; }
+        .loss { background-color: #dc3545; }
+        .reset { background-color: #6c757d; margin-top: 10px; width: 100%; }
+        .result-box { margin-top: 20px; padding: 15px; border: 2px solid #007bff; border-radius: 5px; text-align: center; background: #f0f7ff; }
+        .result-box span { display: block; font-size: 24px; font-weight: bold; color: #007bff; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Progresivni Kalkulator</h2>
+
+    <!-- Početna podešavanja -->
+    <div id="setup">
+        <div class="input-group">
+            <label>Početna Banka (€):</label>
+            <input type="number" id="initialBank" value="100">
+        </div>
+        <div class="input-group">
+            <label>Željeni Profit po betu (€):</label>
+            <input type="number" id="targetProfit" value="10">
+        </div>
+        <hr>
+    </div>
+
+    <!-- Live Stats -->
+    <div class="stats">
+        <div>Trenutna Banka: <br><strong id="currentBankDisplay">0</strong></div>
+        <div>Ukupni Minus: <br><strong id="currentLossDisplay" style="color:red">0</strong></div>
+    </div>
+
+    <!-- Igra -->
+    <div class="input-group">
+        <label>Trenutna Kvota:</label>
+        <input type="number" id="currentOdds" step="0.01" value="2.00">
+    </div>
+
+    <div class="result-box">
+        Sledeći potreban ulog:
+        <span id="nextStakeDisplay">0.00</span>
+    </div>
+
+    <div class="btn-group" style="margin-top: 20px;">
+        <button class="win" onclick="handleResult('win')">PROLAZ (WIN)</button>
+        <button class="loss" onclick="handleResult('loss')">PAD (LOSS)</button>
+    </div>
+
+    <button class="reset" onclick="resetCalculator()">RESETUJ SVE</button>
+</div>
+
+<script>
+    let bank = 0;
+    let target = 0;
+    let totalLoss = 0;
+
+    function init() {
+        bank = parseFloat(document.getElementById('initialBank').value);
+        target = parseFloat(document.getElementById('targetProfit').value);
+        calculateStake();
+        updateUI();
+    }
+
+    function calculateStake() {
+        let odds = parseFloat(document.getElementById('currentOdds').value);
+        if (odds <= 1) {
+            alert("Kvota mora biti veća od 1.00");
+            return;
+        }
+        
+        // Formula: (Minus + Cilj) / (Kvota - 1)
+        let stake = (totalLoss + target) / (odds - 1);
+        document.getElementById('nextStakeDisplay').innerText = stake.toFixed(2);
+        return stake;
+    }
+
+    function handleResult(type) {
+        let stake = calculateStake();
+        let odds = parseFloat(document.getElementById('currentOdds').value);
+
+        if (type === 'win') {
+            let winAmount = stake * odds;
+            bank += (winAmount - stake); // Neto dobitak
+            totalLoss = 0; // Resetujemo minus jer smo ga pokrili
+            alert("Čestitamo! Profit ostvaren. Sistem se vraća na početni ulog.");
+        } else {
+            bank -= stake;
+            totalLoss += stake; // Dodajemo ulog u minus koji jurimo
+        }
+
+        updateUI();
+        calculateStake();
+    }
+
+    function updateUI() {
+        document.getElementById('currentBankDisplay').innerText = bank.toFixed(2);
+        document.getElementById('currentLossDisplay').innerText = totalLoss.toFixed(2);
+    }
+
+    function resetCalculator() {
+        if(confirm("Da li želite da resetujete celu sesiju?")) {
+            location.reload();
+        }
+    }
+
+    // Automatsko ažuriranje uloga kada se promeni kvota
+    document.getElementById('currentOdds').addEventListener('input', calculateStake);
+    document.getElementById('initialBank').addEventListener('input', init);
+    document.getElementById('targetProfit').addEventListener('input', init);
+
+    // Pokreni inicijalno
+    init();
+</script>
+
+</body>
+</html>
